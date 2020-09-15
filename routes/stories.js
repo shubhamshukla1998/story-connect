@@ -15,10 +15,11 @@ router.post("/", ensureAuth, async (req, res) => {
   try {
     req.body.user = req.user.id;
     await Story.create(req.body);
+
     res.redirect("/dashboard");
   } catch (err) {
     console.error(err);
-    res.render("error/500");
+    res.render("errors/500");
   }
 });
 
@@ -49,7 +50,7 @@ router.get("/edit/:id", ensureAuth, async (req, res) => {
     }).lean();
 
     if (!story) {
-      return res.render("error/404");
+      return res.render("errors/404");
     }
     if (story.user != req.user.id) {
       res.redirect("/stories");
@@ -70,7 +71,7 @@ router.get("/:id", ensureAuth, async (req, res) => {
     const story = await Story.findById(req.params.id).populate("user").lean();
 
     if (!story) {
-      return res.render("error/404");
+      return res.render("errors/404");
     }
     res.render("stories/show", {
       story,
@@ -81,19 +82,19 @@ router.get("/:id", ensureAuth, async (req, res) => {
   }
 });
 
-// Update Stories
+// Update Story
 // @route PUT /stories/:id
-router.get("/edit/:id", ensureAuth, async (req, res) => {
+router.put("/:id", ensureAuth, async (req, res) => {
   try {
-    const story = await Story.findById(req.params.id).lean();
+    let story = await Story.findById(req.params.id).lean();
 
     if (!story) {
-      return res.render("error/404");
+      return res.render("errors/404");
     }
     if (story.user != req.user.id) {
       res.redirect("/stories");
     } else {
-      story = await Story.findByIdAndUpdate({ _id: req.params.id }, req.body, {
+      story = await Story.findOneAndUpdate({ _id: req.params.id }, req.body, {
         new: true,
         runValidators: true,
       });
@@ -101,7 +102,7 @@ router.get("/edit/:id", ensureAuth, async (req, res) => {
     }
   } catch (err) {
     console.error(err);
-    res.render("errors/500");
+    return res.render("errors/500");
   }
 });
 
@@ -109,11 +110,22 @@ router.get("/edit/:id", ensureAuth, async (req, res) => {
 // @route DELETE /stories/:id
 router.delete("/:id", ensureAuth, async (req, res) => {
   try {
-    await Story.remove({ _id: req.params.id });
-    res.redirect("/dashboard");
+    let story = await Story.findById(req.params.id).lean();
+
+    if (!story) {
+      return res.render("errors/404");
+    }
+
+    if (story.user != req.user.id) {
+      res.redirect("/stories");
+    } else {
+      await Story.remove({ _id: req.params.id });
+      res.redirect("/dashboard");
+      console.log(M);
+    }
   } catch (err) {
     console.error(err);
-    res.render("errors/500");
+    return res.render("errors/500");
   }
 });
 

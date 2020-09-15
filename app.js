@@ -87,6 +87,8 @@ app.use(function (req, res, next) {
 
 //Static File
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/stories", express.static(path.join(__dirname, "public")));
+app.use("/stories/user", express.static(path.join(__dirname, "public")));
 
 // Routes
 app.use("/", require("./routes/index"));

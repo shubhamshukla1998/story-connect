@@ -1,10 +1,10 @@
-<h6>Dashboard</h6>
-<h3>Welcome {{name}}</h3>
-<p>Here are your stories</p>
+<h3><u>Dashboard</u></h3>
+<h5>Welcome {{name}} &#128512;</h5>
+<p>Your Stories: </p>
 {{#if stories}}
 <table class="striped">
     <thead>
-        <tr>
+        <tr class="black white-text">
             <th>Title</th>
             <th>Date</th>
             <th>Status</th>
@@ -13,8 +13,8 @@
     </thead>
     <tbody>
         {{#each stories}}
-        <tr>
-            <td><a href="/stories/{{_id}}">{{title}}</a></td>
+        <tr class="hoverable story-table-row">
+            <td><a href="/stories/{{_id}}" class="black-text text-darken-2"><b><u>{{title}}</u></b></a></td>
             <td>{{formatDate createdAt 'Do MMMM YYYY, h:mm a'}}</td>
             <td><span class="dash-status">{{status}}</span></td>
             <td>
@@ -34,6 +34,6 @@
     </tbody>
 </table>
 {{else}}
-<p>You don't have any stories yet</p>
+<h6 class="text-center">You don't have any stories yet, Create one? </h6>
 
 {{/if}}
